@@ -13,5 +13,6 @@ namespace TabManagerWinUi.Services
         Task<IEnumerable<TabGroup>> GetTabGroups();
         Task UpdateTabGroups(IEnumerable<TabGroup> tabGroups);
         void ClearData();
+        string GetPathToData();
     }
 }

@@ -52,5 +52,8 @@ namespace TabManagerWinUi.Services
         {
             File.Delete(_file.Path);
         }
+
+        public string GetPathToData() => _file.Path;
+       
     }
 }

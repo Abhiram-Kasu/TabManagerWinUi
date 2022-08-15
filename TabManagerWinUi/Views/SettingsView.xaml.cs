@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using TabManagerWinUi.Services;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -54,6 +55,15 @@ namespace TabManagerWinUi.Views
                 dd.XamlRoot = this.Content.XamlRoot;
                 await dd.ShowAsync();
             }
+            
+        }
+
+        private void CopyPathToSerializedData_Click(object sender, RoutedEventArgs e)
+        {
+            var dp = new DataPackage();
+            dp.SetText(_serializeListService.GetPathToData());
+            Clipboard.SetContent(dp);
+           
             
         }
     }
