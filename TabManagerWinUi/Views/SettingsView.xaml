@@ -8,8 +8,16 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Tag="Settings">
-
+    <Page.Resources>
+        <Style TargetType="Button" x:Key="WarningButton">
+            <Setter Property="Background" Value="Red"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="5"/>
+        </Style>
+    </Page.Resources>
     <Grid>
-        <TextBlock>Hello Settings</TextBlock>
+        <StackPanel Spacing="10" Margin="10">
+            <Button Style="{StaticResource WarningButton}" Margin="10" x:Name="ClearSerializedData" Click="ClearSerializedData_Click">Clear All Serialized Tab Group Data</Button>
+        </StackPanel>
     </Grid>
 </Page>

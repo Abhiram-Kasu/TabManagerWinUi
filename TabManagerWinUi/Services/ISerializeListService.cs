@@ -12,5 +12,6 @@ namespace TabManagerWinUi.Services
         Task<bool> DoesExistingPrefsExist();
         Task<IEnumerable<TabGroup>> GetTabGroups();
         Task UpdateTabGroups(IEnumerable<TabGroup> tabGroups);
+        void ClearData();
     }
 }

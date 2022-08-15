@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using TabManagerWinUi.Services;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -23,9 +24,37 @@ namespace TabManagerWinUi.Views
     /// </summary>
     public sealed partial class SettingsView : Page
     {
+        ISerializeListService _serializeListService;
         public SettingsView()
         {
+            _serializeListService = new SerializeListService();
+            _ = _serializeListService.DoesExistingPrefsExist();
             this.InitializeComponent();
+        }
+
+        private async void ClearSerializedData_Click(object sender, RoutedEventArgs e)
+        {
+            var d = new ContentDialog();
+            d.XamlRoot = this.Content.XamlRoot;
+            d.Title = "Are you sure you want to delete this data, it is irreversible!";
+            
+            d.PrimaryButtonText = "Yes";
+            d.SecondaryButtonText = "No";
+            d.PrimaryButtonStyle = this.Resources["WarningButton"] as Style;
+            
+            if(await d.ShowAsync() == ContentDialogResult.Primary)
+            {
+                _serializeListService.ClearData();
+                var dd = new ContentDialog
+                {
+                    Title = "Done",
+                    PrimaryButtonText = "Ok"
+
+                };
+                dd.XamlRoot = this.Content.XamlRoot;
+                await dd.ShowAsync();
+            }
+            
         }
     }
 }

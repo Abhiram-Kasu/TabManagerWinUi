@@ -47,5 +47,10 @@ namespace TabManagerWinUi.Services
             
             
         }
+
+        public void ClearData()
+        {
+            File.Delete(_file.Path);
+        }
     }
 }
