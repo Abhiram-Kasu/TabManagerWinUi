@@ -1,0 +1,27 @@
+﻿<Window
+    x:Class="TabManagerWinUi.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:TabManagerWinUi"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+    mc:Ignorable="d">
+    
+
+    <NavigationView  x:Name="NavView" PaneDisplayMode="Top" SelectionChanged="NavigationView_SelectionChanged">
+        <NavigationView.MenuItems>
+            <NavigationViewItem Tag="Home" Content="Home" Icon="Home"/>
+            <NavigationViewItem Content="Detail" Icon="Character" Tag="Detail"/>
+        </NavigationView.MenuItems>
+        <NavigationView.FooterMenuItems>
+            <NavigationViewItem Content="About" Icon="ContactInfo"
+                            Tag="About">
+                
+            </NavigationViewItem>
+            
+        </NavigationView.FooterMenuItems>
+
+        <Frame x:Name="ContentFrame" Background="{ThemeResource AccentAcrylicBackgroundFillColorBaseBrush}"/>
+    </NavigationView>
+</Window>
