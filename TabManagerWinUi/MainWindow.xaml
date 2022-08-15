@@ -12,7 +12,7 @@
     <NavigationView  x:Name="NavView" PaneDisplayMode="Top" SelectionChanged="NavigationView_SelectionChanged">
         <NavigationView.MenuItems>
             <NavigationViewItem Tag="Home" Content="Home" Icon="Home"/>
-            <NavigationViewItem Content="Detail" Icon="Character" Tag="Detail"/>
+            
         </NavigationView.MenuItems>
         <NavigationView.FooterMenuItems>
             <NavigationViewItem Content="About" Icon="ContactInfo"

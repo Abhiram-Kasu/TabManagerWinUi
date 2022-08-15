@@ -9,12 +9,26 @@
     xmlns:models="using:TabManagerWinUi.Models"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded"
     Tag="Home">
 
 
     <Page.Resources>
         <DataTemplate x:DataType="models:Tab" x:Name="Normal" x:Key="Normal">
-            <TextBlock FontSize="{StaticResource BodyTextBlockFontSize}" x:Name="LinkTextBlock" Text="{Binding Name}" Tag="{Binding Link}" DoubleTapped="LinkTextBlock_DoubleTapped"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center" Grid.Column="0" FontSize="{StaticResource BodyTextBlockFontSize}" x:Name="LinkTextBlock" Text="{Binding Name}" Tag="{Binding Link}" DoubleTapped="LinkTextBlock_DoubleTapped"/>
+                <Button Margin="0,10,0,10" Grid.Column="1" VerticalAlignment="Center" Tag="{Binding ID}" HorizontalAlignment="Right" x:Name="RemoveTabButton" Click="RemoveTabButton_Click" >
+                    <Button.Content>
+                        <SymbolIcon Symbol="Cancel"
+                                    Foreground="Red"/>
+                    </Button.Content>
+                </Button>
+            </Grid>
+            
         </DataTemplate>
         <DataTemplate x:DataType="models:Tab" x:Name="Detail" x:Key="Detail">
             <Grid Height="500">
@@ -22,9 +36,92 @@
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="5*"/>
                 </Grid.RowDefinitions>
-                <TextBlock FontSize="{StaticResource SubtitleTextBlockFontSize}" Margin="20" Grid.Row="0" x:Name="LinkTextBlock" Text="{Binding Name}" Tag="{Binding Link}" DoubleTapped="LinkTextBlock_DoubleTapped"/>
-                <WebView2 Margin="10,5,10,10" Grid.Row="1" Source="{Binding Link}"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="1" Margin="0,10,0,10" VerticalAlignment="Center" Tag="{Binding ID}" HorizontalAlignment="Right" Click="RemoveTabButton_Click" >
+                    <Button.Content>
+                        <SymbolIcon Symbol="Cancel"
+                                    Foreground="Red"/>
+                    </Button.Content>
+                </Button>
+                <TextBlock VerticalAlignment="Center" Grid.Column="0" FontSize="{StaticResource SubtitleTextBlockFontSize}" Margin="20" Grid.Row="0" x:Name="LinkTextBlock" Text="{Binding Name}" Tag="{Binding Link}" DoubleTapped="LinkTextBlock_DoubleTapped"/>
+                <WebView2 Grid.ColumnSpan="2" Margin="10,5,10,10" Grid.Row="1" Source="{Binding Link}"/>
             </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="ShowTabs" x:DataType="models:TabGroup">
+            <StackPanel Spacing="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" HorizontalAlignment="Left" FontSize="{StaticResource SubtitleTextBlockFontSize}" Text="{Binding Name}" Margin="10,10,10,10"/>
+                    <Button Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0" x:Name="RemoveTabGroup" CommandParameter="{Binding Id}" Click="RemoveTabGroup_Click">
+                        <Button.Content>
+                            <SymbolIcon Symbol="Cancel" Foreground="Red"/>
+
+                        </Button.Content>
+                    </Button>
+                    <Button Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0" x:Name="AddTab" CommandParameter="{Binding Id}" Click="AddTab_Click">
+                        <Button.Content>
+                            <SymbolIcon Symbol="Add" Foreground="White"/>
+                        </Button.Content>
+                    </Button>
+                    <Button Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0" x:Name="OpenTabs" CommandParameter="{Binding Id}" Click="OpenTabs_Click">
+                        <Button.Content>
+                            <SymbolIcon Symbol="Go"/>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+
+
+
+
+                <ListView IsItemClickEnabled="True" ItemClick="TabsListView_ItemClick" Margin="10" x:Name="TabsListView"  CanReorderItems="True" ItemsSource="{Binding Tabs}" ItemTemplate="{StaticResource Normal}">
+
+                </ListView>
+            </StackPanel>
+        </DataTemplate>
+       
+        <DataTemplate x:Key="HideTabs" x:DataType="models:TabGroup">
+            <StackPanel Spacing="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" HorizontalAlignment="Left" FontSize="{StaticResource SubtitleTextBlockFontSize}" Text="{Binding Name}" Margin="10,10,10,10"/>
+                    <Button Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,10" x:Name="RemoveTabGroup" CommandParameter="{Binding Id}" Click="RemoveTabGroup_Click">
+                        <Button.Content>
+                            <SymbolIcon Symbol="Cancel" Foreground="Red"/>
+
+                        </Button.Content>
+                    </Button>
+                    <Button Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,10" x:Name="AddTab" CommandParameter="{Binding Id}" Click="AddTab_Click">
+                        <Button.Content>
+                            <SymbolIcon Symbol="Add" Foreground="White"/>
+                        </Button.Content>
+                    </Button>
+                    <Button Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,10" x:Name="OpenTabs" CommandParameter="{Binding Id}" Click="OpenTabs_Click">
+                        <Button.Content>
+                            <SymbolIcon Symbol="Go"/>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+
+
+
+
+                
+
+                
+            </StackPanel>
         </DataTemplate>
     </Page.Resources>
 
@@ -39,37 +136,12 @@
             <AppBarButton ToolTipService.ToolTip="Add Tab Group" Icon="Add" x:Name="AddTabGroupButton" Click="AddTabGroupButton_Click"></AppBarButton>
         </CommandBar>
 
-        
-        
-            
-        
-        <ListView Margin="20,60,20,20"  x:Name="TabGroupsListView" >
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="models:TabGroup">
-                    <StackPanel Spacing="10">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="50"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" HorizontalAlignment="Left" FontSize="{StaticResource SubtitleTextBlockFontSize}" Text="{Binding Name}" Margin="10,10,10,10"/>
-                            <Button Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0" x:Name="RemoveTabGroup" CommandParameter="{Binding Id}" Click="RemoveTabGroup_Click">
-                                <Button.Content>
-                                    <SymbolIcon Symbol="Cancel" Foreground="Red"/>
-                                    
-                                </Button.Content>
-                            </Button>
-                        </Grid>
-                        
-                        
-                        
-                        
-                        <ListView IsItemClickEnabled="True" ItemClick="TabsListView_ItemClick" Margin="10" x:Name="TabsListView"  CanReorderItems="True" ItemsSource="{Binding Tabs}" ItemTemplate="{StaticResource Normal}">
-                            
-                        </ListView>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+
+
+
+
+        <ListView Margin="20,60,20,20" ItemTemplate="{StaticResource ShowTabs}" IsItemClickEnabled="True" ItemClick="TabGroupsListView_ItemClick" x:Name="TabGroupsListView" >
+         
             
         </ListView> 
     </Grid>

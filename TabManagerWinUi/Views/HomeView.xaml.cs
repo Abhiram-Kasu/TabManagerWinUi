@@ -29,46 +29,26 @@ namespace TabManagerWinUi.Views
     public sealed partial class HomeView : Page
     {
         
-
+        private readonly ISerializeListService _serializeListService;
         private readonly ObservableCollection<TabGroup> _tabGroups = new();
 
         public HomeView()
         {
             this.InitializeComponent();
+
+            _serializeListService = new SerializeListService();
+
             
-            _tabGroups.CollectionChanged += (sender, e) => TabGroupsListView.ItemsSource = _tabGroups;
-            _tabGroups.Add(new TabGroup()
-            {
-                Name = "TabGroup",
-                Tabs = new List<Tab>()
-                {
-                    new Tab()
-                    {
-                        Name = "Home Page",
-                        Link = @"https://stackoverflow.com/questions/40026593/uwp-listview-how-to-expand-an-item-when-select-it"
 
-                    }
-                }
-            });
-            _tabGroups.Add(new TabGroup()
-            {
-                Name = "Second Tab Group",
-                Tabs = new List<Tab>()
-                {
-                    new Tab()
-                    {
-                        Name = "Second Page",
-                        Link = @"https://www.google.com/search?q=how+to+comment+code+visual+studio+2022+windows+11&rlz=1C1CHBF_enUS905US905&oq=how+to+comment+code+visual+studio+2022+windows+11&aqs=chrome..69i57.10658j0j4&sourceid=chrome&ie=UTF-8"
+            _tabGroups.CollectionChanged += async (sender, e) => await UpdateList();
+            
+        }
 
-                    },
-                     new Tab()
-                    {
-                        Name = "Secondary Second Page",
-                        Link = @"https://apps.microsoft.com/store/detail/fluent-xaml-theme-editor/9N2XD3Q8X57C?hl=en-us&gl=US"
-
-                    }
-                }
-            });
+        private async Task UpdateList()
+        {
+            TabGroupsListView.ItemsSource = null;
+            TabGroupsListView.ItemsSource = _tabGroups;
+            await _serializeListService.UpdateTabGroups(_tabGroups);
         }
 
         private async void AddTabGroupButton_Click(object sender, RoutedEventArgs e)
@@ -89,8 +69,10 @@ namespace TabManagerWinUi.Views
             }
             _tabGroups.Add(new TabGroup()
             {
-                Name = name
+                Name = name,
+                Tabs = new List<Tab>()
             });
+            
 
         }
 
@@ -155,6 +137,114 @@ namespace TabManagerWinUi.Views
         {
             var button = sender as Button;
             _tabGroups.Remove(_tabGroups.Where(x => x.Id.ToString() == button.CommandParameter.ToString()).First());
+        }
+
+        private async void AddTab_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var name = await ShowAddDialogAsync("Link Name:");
+            if (string.IsNullOrEmpty(name))
+            {
+                var d = new ContentDialog
+                {
+                    PrimaryButtonText = "Ok",
+                    Title = "You did not enter a valid name!",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await d.ShowAsync();
+                return;
+            }
+            var link = await ShowAddDialogAsync("Link Address:");
+            if(!string.IsNullOrEmpty(link) && Uri.TryCreate(link, UriKind.Absolute, out var uri))
+            {
+                int index = 0;
+                foreach(var item in _tabGroups)
+                {
+                    
+                    if (item.Id.ToString() == button.CommandParameter.ToString())
+                    {
+                        break;
+                    }
+                    index++;
+
+                }
+                var copy = _tabGroups[index];
+                copy.Tabs = copy.Tabs.Append(new Tab
+                {
+                    Name = name,
+                    Link = link
+                });
+                _tabGroups[index] = copy;
+                
+                
+                await UpdateList();
+
+            }
+            else
+            {
+                var d = new ContentDialog
+                {
+                    PrimaryButtonText = "Ok",
+                    Title = "You did not enter a valid link address!",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await d.ShowAsync();
+                return;
+            }
+        }
+
+        private void TabGroupsListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var listViewItem = (sender as ListView).ContainerFromItem(e.ClickedItem) as ListViewItem;
+            if (listViewItem.ContentTemplate == (DataTemplate)this.Resources["ShowTabs"])
+            {
+                listViewItem.ContentTemplate = (DataTemplate)this.Resources["HideTabs"];
+            }
+            else
+            {
+                listViewItem.ContentTemplate = (DataTemplate)this.Resources["ShowTabs"];
+            }
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (await _serializeListService.DoesExistingPrefsExist())
+            {
+                
+                var list = await _serializeListService.GetTabGroups();
+                foreach(var item in list)
+                {
+                    _tabGroups.Add(item);
+                }
+            }
+                
+
+        }
+
+        private async void RemoveTabButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            
+            foreach(var tabGroup in _tabGroups)
+            {
+                tabGroup.Tabs = tabGroup.Tabs.Where(x => x.ID.ToString() != button.Tag.ToString()).ToArray();
+
+
+
+            }
+            await UpdateList();
+        }
+
+        private async void OpenTabs_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            
+            
+            foreach (var item in _tabGroups.Where(x => x.Id.ToString() == button.CommandParameter.ToString()).First().Tabs)
+            {
+                await Launcher.LaunchUriAsync(new Uri(item.Link));
+            }
+            
         }
     }
 }
