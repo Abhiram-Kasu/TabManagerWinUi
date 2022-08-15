@@ -126,21 +126,35 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.Resources>
             <CornerRadius x:Key="CornerRadius">8</CornerRadius>
         </Grid.Resources>
        
         
-        <CommandBar VerticalAlignment="Stretch" DefaultLabelPosition="Collapsed" Background="{ThemeResource AccentAcrylicBackgroundFillColorBaseBrush}">
-            
-            <AppBarButton ToolTipService.ToolTip="Add Tab Group" Icon="Add" x:Name="AddTabGroupButton" Click="AddTabGroupButton_Click"></AppBarButton>
-        </CommandBar>
+       
+
+        <Grid Grid.Row="0" Background="{StaticResource AccentAcrylicBackgroundFillColorBaseBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Margin="10" Click="AddTabGroupButton_Click">
+                <Button.Content>
+                    <SymbolIcon Symbol="Add"/>
+                </Button.Content>
+            </Button>
+            <AutoSuggestBox  VerticalAlignment="Center" PlaceholderText="Search for a tab or tab group" QueryIcon="Zoom" x:Name="AutoSuggestSearchBox" Grid.Column="0" Margin="10,5,5,5" TextChanged="AutoSuggestSearchBox_TextChanged" SuggestionChosen="AutoSuggestSearchBox_SuggestionChosen"/>
+        </Grid>
 
 
 
+        <TextBlock Visibility="Collapsed" Foreground="{StaticResource SystemChromeGrayColor}" x:Name="ShowAddTabGroupText" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1">Click the + button in the top right to add your Tab Groups</TextBlock>
 
-
-        <ListView Margin="20,60,20,20" ItemTemplate="{StaticResource ShowTabs}" IsItemClickEnabled="True" ItemClick="TabGroupsListView_ItemClick" x:Name="TabGroupsListView" >
+        <ListView Grid.Row="1" Margin="20,30,20,20" ItemTemplate="{StaticResource ShowTabs}" IsItemClickEnabled="True" ItemClick="TabGroupsListView_ItemClick" x:Name="TabGroupsListView" >
          
             
         </ListView> 

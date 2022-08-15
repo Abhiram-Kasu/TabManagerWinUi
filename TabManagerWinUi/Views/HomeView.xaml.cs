@@ -46,9 +46,26 @@ namespace TabManagerWinUi.Views
 
         private async Task UpdateList()
         {
+            var task = Task.Run(() =>
+            {
+                var list = _tabGroups.Select(e => e.Name).ToList();
+                _tabGroups.ToList().ForEach(e => e.Tabs.ToList().ForEach(x => list.Add(x.Name)));
+
+
+                return list;
+            });
             TabGroupsListView.ItemsSource = null;
             TabGroupsListView.ItemsSource = _tabGroups;
             await _serializeListService.UpdateTabGroups(_tabGroups);
+            if (_tabGroups.Any())
+            {
+                ShowAddTabGroupText.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ShowAddTabGroupText.Visibility = Visibility.Visible;
+            }
+            AutoSuggestSearchBox.ItemsSource = await task;
         }
 
         private async void AddTabGroupButton_Click(object sender, RoutedEventArgs e)
@@ -217,6 +234,15 @@ namespace TabManagerWinUi.Views
                     _tabGroups.Add(item);
                 }
             }
+
+            if (_tabGroups.Any())
+            {
+                ShowAddTabGroupText.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ShowAddTabGroupText.Visibility = Visibility.Visible;
+            }
                 
 
         }
@@ -244,7 +270,65 @@ namespace TabManagerWinUi.Views
             {
                 await Launcher.LaunchUriAsync(new Uri(item.Link));
             }
-            
+
+            if (_tabGroups.Any())
+            {
+                ShowAddTabGroupText.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ShowAddTabGroupText.Visibility = Visibility.Visible;
+            }
+
+            var list = _tabGroups.Select(e => e.Name).ToList();
+            _tabGroups.ToList().ForEach(e => e.Tabs.ToList().ForEach(x => list.Add(x.Name)));
+
+
+            AutoSuggestSearchBox.ItemsSource = list;
+
+
+        }
+        private bool isBusySearching = false;
+        private void AutoSuggestSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (isBusySearching)
+            {
+                return;
+            }
+            else
+            {
+                isBusySearching = true;
+            }
+
+            if (string.IsNullOrEmpty(sender.Text))
+            {
+                TabGroupsListView.ItemsSource = _tabGroups;
+            }
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var suitableItems = new HashSet<TabGroup>();
+                var queryString = sender.Text.ToLower().Trim();
+                foreach(var item in _tabGroups)
+                {
+                    if(item.Name.ToLower().Contains(queryString))
+                        suitableItems.Add(item);
+                    else
+                    {
+                        if (item.Tabs.Where(x => x.Name.ToLower().Contains(queryString)).Any())
+                            suitableItems.Add(item);
+                    }
+                }
+                sender.ItemsSource = suitableItems.Select(x => x.Name);
+                TabGroupsListView.ItemsSource = suitableItems;
+
+            }
+            isBusySearching = false;
+
+        }
+
+        private void AutoSuggestSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            TabGroupsListView.ItemsSource =  _tabGroups.Where(x => x.Name.ToLower() == args.SelectedItem?.ToString()?.ToLower());
         }
     }
 }
