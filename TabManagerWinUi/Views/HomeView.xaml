@@ -8,7 +8,7 @@
     xmlns:media="using:ABI.Microsoft.UI.Xaml.Media"
     xmlns:models="using:TabManagerWinUi.Models"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
     Loaded="Page_Loaded"
     Tag="Home">
 
