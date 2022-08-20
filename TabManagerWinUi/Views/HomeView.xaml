@@ -16,11 +16,14 @@
     <Page.Resources>
         <DataTemplate x:DataType="models:Tab" x:Name="Normal" x:Key="Normal">
             <Grid>
+                
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="50"/>
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
+                
+                
                 <TextBlock VerticalAlignment="Center" Grid.Column="0" FontSize="{StaticResource BodyTextBlockFontSize}" x:Name="LinkTextBlock" Text="{Binding Name}" Tag="{Binding Link}" DoubleTapped="LinkTextBlock_DoubleTapped"/>
                 <Button Grid.Column="1" Margin="0,10,0,10" VerticalAlignment="Center" Tag="{Binding Link}" HorizontalAlignment=" Right" x:Name="OpenTab" Click="OpenTab_Click">
                     <Button.Content>
@@ -33,6 +36,7 @@
                                     Foreground="Red"/>
                     </Button.Content>
                 </Button>
+                
             </Grid>
             
         </DataTemplate>

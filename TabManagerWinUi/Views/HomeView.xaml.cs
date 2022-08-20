@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using FuzzySharp;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -292,17 +293,10 @@ namespace TabManagerWinUi.Views
 
 
         }
-        private bool isBusySearching = false;
+        
         private void AutoSuggestSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            if (isBusySearching)
-            {
-                return;
-            }
-            else
-            {
-                isBusySearching = true;
-            }
+            
 
             if (string.IsNullOrEmpty(sender.Text))
             {
@@ -314,11 +308,11 @@ namespace TabManagerWinUi.Views
                 var queryString = sender.Text.ToLower().Trim();
                 foreach(var item in _tabGroups)
                 {
-                    if(item.Name.ToLower().Contains(queryString))
+                    if(Fuzz.Ratio(item.Name.ToLower(), queryString) > 80)
                         suitableItems.Add(item);
                     else
                     {
-                        if (item.Tabs.Where(x => x.Name.ToLower().Contains(queryString)).Any())
+                        if (item.Tabs.Where(x => Fuzz.Ratio(x.Name.ToLower(), queryString) > 80).Any())
                             suitableItems.Add(item);
                     }
                 }
@@ -326,7 +320,7 @@ namespace TabManagerWinUi.Views
                 TabGroupsListView.ItemsSource = suitableItems;
 
             }
-            isBusySearching = false;
+            
 
         }
 
