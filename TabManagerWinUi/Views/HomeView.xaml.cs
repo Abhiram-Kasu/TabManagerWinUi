@@ -78,7 +78,8 @@ namespace TabManagerWinUi.Views
                 {
                     PrimaryButtonText = "Ok",
                     Title = "You did not enter a valid name!",
-                    XamlRoot = this.Content.XamlRoot
+                    XamlRoot = this.Content.XamlRoot,
+                    DefaultButton = ContentDialogButton.Primary
                 };
                 await d.ShowAsync();
                 return;
@@ -104,7 +105,8 @@ namespace TabManagerWinUi.Views
                 IsSecondaryButtonEnabled = true,
                 PrimaryButtonText = "Ok",
                 SecondaryButtonText = "Cancel",
-                XamlRoot = this.Content.XamlRoot
+                XamlRoot = this.Content.XamlRoot,
+                DefaultButton = ContentDialogButton.Primary
             };
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
@@ -166,6 +168,7 @@ namespace TabManagerWinUi.Views
                 {
                     PrimaryButtonText = "Ok",
                     Title = "You did not enter a valid name!",
+                    DefaultButton = ContentDialogButton.Primary,
                     XamlRoot = this.Content.XamlRoot
                 };
                 await d.ShowAsync();
@@ -203,6 +206,7 @@ namespace TabManagerWinUi.Views
                 {
                     PrimaryButtonText = "Ok",
                     Title = "You did not enter a valid link address!",
+                    DefaultButton = ContentDialogButton.Primary,
                     XamlRoot = this.Content.XamlRoot
                 };
                 await d.ShowAsync();
@@ -329,6 +333,12 @@ namespace TabManagerWinUi.Views
         private void AutoSuggestSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             TabGroupsListView.ItemsSource =  _tabGroups.Where(x => x.Name.ToLower() == args.SelectedItem?.ToString()?.ToLower());
+        }
+
+        private async void OpenTab_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            await Launcher.LaunchUriAsync(new Uri(button.Tag.ToString()));
         }
     }
 }

@@ -30,6 +30,9 @@ namespace TabManagerWinUi
         public MainWindow()
         {
             this.InitializeComponent();
+            
+            
+
             NavigateToView("Home");
         }
 
